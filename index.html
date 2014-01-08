@@ -2,6 +2,8 @@
 <head>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	
+	<link rel="stylesheet" href="/index.css"
 </head>
 
 
@@ -18,9 +20,11 @@
 					<th>MAC</th>
 				</thead>
 				<tbody data-bind="foreach: devices">
-					<tr data-bind="text: name"></tr>
-					<tr data-bind="text: ip"></tr>
-					<tr data-bind="text: mac"></tr>
+					<tr>
+						<td data-bind="text: name"></td>
+						<td data-bind="text: ip"></td>
+						<td data-bind="text: mac"></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -29,6 +33,8 @@
 	<script>
 		$(function() {
 			var Device = function(vars) {
+				var __this = this;
+
 				this.mac = ko.observable();
 				this.ip = ko.observable();
 				this.name = ko.observable();
@@ -37,11 +43,11 @@
 					vars = vars || {};
 
 					if (vars.hasOwnProperty('mac'))
-						this.mac(vars.mac);
+						__this.mac(vars.mac);
 					if (vars.hasOwnProperty('ip'))
-						this.ip(vars.ip);
+						__this.ip(vars.ip);
 					if (vars.hasOwnProperty('name'))
-						this.name(vars.name);
+						__this.name(vars.name);
 				}
 
 				init(vars);
@@ -54,7 +60,7 @@
 				this.msg = ko.observable();
 
 				var init = function() {
-					$.getJSON('/device', function(resp) {
+					$.getJSON('/devices', function(resp) {
 						__this.msg('');
 
 						if (resp.hasOwnProperty('devices')) {

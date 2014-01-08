@@ -1,9 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Text, create_engine
 
-db = create_engine('sqlite:///ipMacCrud.db')
 Base = declarative_base()
-
 
 class Device(Base):
 	__tablename__ = "device"
