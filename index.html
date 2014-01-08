@@ -1,0 +1,86 @@
+<html>
+<head>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+
+
+<body>
+
+	<div id="devices">
+		<span data-bind="text: msg"></span>
+
+		<div data-bind="if: devices().length > 0">
+			<table>
+				<thead>
+					<th>Name</th>
+					<th>IP</th>
+					<th>MAC</th>
+				</thead>
+				<tbody data-bind="foreach: devices">
+					<tr data-bind="text: name"></tr>
+					<tr data-bind="text: ip"></tr>
+					<tr data-bind="text: mac"></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script>
+		$(function() {
+			var Device = function(vars) {
+				this.mac = ko.observable();
+				this.ip = ko.observable();
+				this.name = ko.observable();
+
+				var init = function(vars) {
+					vars = vars || {};
+
+					if (vars.hasOwnProperty('mac'))
+						this.mac(vars.mac);
+					if (vars.hasOwnProperty('ip'))
+						this.ip(vars.ip);
+					if (vars.hasOwnProperty('name'))
+						this.name(vars.name);
+				}
+
+				init(vars);
+			}
+
+			var Index = function() {
+				var __this = this;
+				
+				this.devices = ko.observableArray();
+				this.msg = ko.observable();
+
+				var init = function() {
+					$.getJSON('/device', function(resp) {
+						__this.msg('');
+
+						if (resp.hasOwnProperty('devices')) {
+							var devices = []
+							$.each(resp.devices, function(i, device) {
+								var d = new Device(device);
+								devices.push(d);
+							})
+							
+							__this.devices(devices);
+							if (__this.devices().length <= 0)
+								__this.msg("No Devices");
+						}
+						else {
+							error = "somthing unexpected occured";
+							__this.msg(error);
+						}
+					})
+				};
+
+				init();
+			}
+
+			ko.applyBindings(new Index(), $('#devices').get(0));
+		});
+	</script>
+
+</body>
+</html>
