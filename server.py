@@ -63,10 +63,8 @@ class Devices(object):
         with sessionScope() as s:
             try:
                 device = s.query(Device).filter_by(mac=mac).one()
-                print "device found"
             except NoResultFound:
                 device = Device()
-                print "device not found"
 
             data['mac'] = mac
             data['ip'] = cherrypy.request.headers['Remote-Addr']
