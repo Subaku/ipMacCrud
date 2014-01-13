@@ -11,7 +11,7 @@ class Device(Base):
 	mac  = Column(Text, primary_key=True)
 	ip   = Column(Text)
 	name = Column(Text, nullable=False)
-	last_updated = Column(BigInteger, onupdate=time)
+	last_updated = Column(BigInteger)
 
 	def toDict(self):
 		return {
