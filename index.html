@@ -18,12 +18,14 @@
 					<th>Name</th>
 					<th>IP</th>
 					<th>MAC</th>
+					<th>Last Updated</th>
 				</thead>
 				<tbody data-bind="foreach: devices">
 					<tr>
 						<td data-bind="text: name"></td>
 						<td data-bind="text: ip"></td>
 						<td data-bind="text: mac"></td>
+						<td data-bind="text: updated"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -38,6 +40,25 @@
 				this.mac = ko.observable();
 				this.ip = ko.observable();
 				this.name = ko.observable();
+				this.last_updated = ko.observable();
+
+				this.updated = ko.computed(function() {
+					var updated = new Date(this.last_updated()*1000);
+					
+					var month     = updated.getMonth()+1,
+						monthPad  = month < 10 ? "0"+month : month,
+						day       = updated.getDate(),
+						dayPad    = day < 10 ? "0"+day : day,
+						year      = updated.getFullYear(),
+						hour      = updated.getHours(),
+						amPm      = hour >= 12 ? "PM" : "AM",
+						meridian  = hour <= 12 ? hour : hour % 12,
+						hourPad   = meridian < 10 ? "0"+meridian : meridian,
+						minute    = updated.getMinutes(),
+						minutePad = minute < 10 ? "0"+minute : minute;
+
+					return monthPad+"/"+dayPad+"/"+year +" "+ hourPad+":"+minutePad +" "+amPm;
+				}, this);
 
 				var init = function(vars) {
 					vars = vars || {};
@@ -48,6 +69,8 @@
 						__this.ip(vars.ip);
 					if (vars.hasOwnProperty('name'))
 						__this.name(vars.name);
+					if (vars.hasOwnProperty('last_updated'))
+						__this.last_updated(vars.last_updated);
 				}
 
 				init(vars);

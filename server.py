@@ -9,6 +9,7 @@ import json
 from models import Device
 from contextlib import contextmanager
 from cherrypy.lib.static import serve_file
+from time import time
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -63,13 +64,15 @@ class Devices(object):
         with sessionScope() as s:
             try:
                 device = s.query(Device).filter_by(mac=mac).one()
-                print "device found"
             except NoResultFound:
                 device = Device()
-                print "device not found"
 
             data['mac'] = mac
             data['ip'] = cherrypy.request.headers['Remote-Addr']
+	    if "X-Forwarded-For" in cherrypy.request.headers:
+		    data['ip'] = cherrypy.request.headers['X-Forwarded-For']
+	
+	    data['last_updated'] = time()
             return json.dumps(Devices.updateObject(s, device, data), indent=4)
 
 
@@ -82,10 +85,10 @@ root = Root()
 
 conf = {
     'global': {
-        'server.socket_host': '0.0.0.0',
-        'server.socket_port': 8001,
+        'server.socket_port': 8080,
     },
     '/': {
+	'tools.proxy.on': True,
     	'tools.staticdir.on': True,
         'tools.staticdir.dir': PATH,
         'tools.staticdir.index': 'index.html',
