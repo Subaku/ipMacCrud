@@ -48,7 +48,7 @@ class Devices(object):
         data = {'devices': []}
 
         with sessionScope() as s:
-            data['devices'] = [d.toDict() for d in s.query(Device).all()]
+            data['devices'] = [d.toDict() for d in s.query(Device).order_by(Device.name).all()]
             
         return json.dumps(data, indent=4)
 
